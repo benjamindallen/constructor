@@ -5,7 +5,31 @@ pub enum Nucleotide {
 }
 
 impl Nucleotide {
-
+    pub fn from_char(input: char) -> Result<Nucleotide, String> {
+        match input {
+            'A' | 'a' => Ok(Nucleotide::A),
+            'C' | 'c' => Ok(Nucleotide::C),
+            'G' | 'g' => Ok(Nucleotide::G),
+            'T' | 't' => Ok(Nucleotide::T),
+            bad_nt => Err(format!("Bad nucleotide specifier: {}",bad_nt))
+        }
+    }
+    pub fn to_char(&self) -> char {
+        match self {
+            &Nucleotide::A => 'A',
+            &Nucleotide::C => 'C',
+            &Nucleotide::G => 'G',
+            &Nucleotide::T => 'T',
+        }
+    }
+    pub fn complement(&self) -> Nucleotide {
+        match self {
+            &Nucleotide::A => Nucleotide::T,
+            &Nucleotide::C => Nucleotide::G,
+            &Nucleotide::G => Nucleotide::C,
+            &Nucleotide::T => Nucleotide::A,
+        }
+    }
 }
 
 pub struct Sequence {
@@ -17,45 +41,23 @@ impl Sequence {
         Sequence{data: Vec::new()}
     }
     pub fn from_str(input: &str) -> Result<Sequence, String> {
-        let mut nt_string = Sequence::new();
+        let mut seq = Sequence::new();
         for ch in input.chars() {
-            nt_string.data.push(
-                match ch {
-                    'A' | 'a' => Nucleotide::A,
-                    'C' | 'c' => Nucleotide::C,
-                    'G' | 'g' => Nucleotide::G,
-                    'T' | 't' => Nucleotide::T,
-                    bad_nt => return Err(format!("Bad nucleotide specifier: {}",bad_nt))
-                }
-            );
+            seq.data.push(Nucleotide::from_char(ch)?);
         }
-        Ok(nt_string)
+        Ok(seq)
     }
     pub fn to_string(&self) -> String {
         let mut output = String::new();
         for nt in self.data.iter() {
-            output.push_str(
-                match nt {
-                    &Nucleotide::A => "A",
-                    &Nucleotide::C => "C",
-                    &Nucleotide::G => "G",
-                    &Nucleotide::T => "T",
-                }
-            );
+            output.push(nt.to_char());
         }
         output
     }
     pub fn reverse_complement(&self) -> Sequence {
         let mut rc = Sequence::new();
         for nt in self.data.iter().rev() {
-            rc.data.push(
-                match nt {
-                    &Nucleotide::A => Nucleotide::T,
-                    &Nucleotide::C => Nucleotide::G,
-                    &Nucleotide::G => Nucleotide::C,
-                    &Nucleotide::T => Nucleotide::A,
-                }
-            );
+            rc.data.push(nt.complement());
         }
         rc
     }
