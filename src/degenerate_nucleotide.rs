@@ -1,4 +1,4 @@
-use nucleotide::{Nucleotide, NucleotideTraits};
+use nucleotide::{Nucleotide, NucleotideLike};
 
 #[derive(PartialEq, Eq, Hash, Clone, Debug)]
 pub enum DegenerateNucleotide {
@@ -44,7 +44,7 @@ impl DegenerateNucleotide {
     }
 }
 
-impl NucleotideTraits for DegenerateNucleotide {
+impl NucleotideLike for DegenerateNucleotide {
     type N = DegenerateNucleotide;
     fn from_char(input: char) -> Result<DegenerateNucleotide, String> {
         match input {
@@ -109,7 +109,7 @@ impl NucleotideTraits for DegenerateNucleotide {
 #[cfg(test)]
 mod tests {
     use super::DegenerateNucleotide;
-    use nucleotide::{Nucleotide, NucleotideTraits};
+    use nucleotide::{Nucleotide, NucleotideLike};
     use std::collections::HashSet;
 
     const DEGENERATE_NUCLEOTIDE_CHARS: &'static str = "ACGTRYSWKMBDHVN";

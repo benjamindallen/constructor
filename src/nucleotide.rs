@@ -3,14 +3,14 @@ pub enum Nucleotide {
     A, C, G, T,
 }
 
-pub trait NucleotideTraits {
+pub trait NucleotideLike {
     type N;
     fn from_char(input: char) -> Result<Self::N, String>;
     fn to_char(&self) -> char;
     fn complement(&self) -> Self::N;
 }
 
-impl NucleotideTraits for Nucleotide {
+impl NucleotideLike for Nucleotide {
     type N = Nucleotide;
     fn from_char(input: char) -> Result<Nucleotide, String> {
         match input {

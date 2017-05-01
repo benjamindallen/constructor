@@ -1,6 +1,8 @@
 extern crate argparse;
 
-mod genetic_code;
+mod sequence;
+mod nucleotide;
+mod degenerate_nucleotide;
 
 struct CommandLineArgs {
     nts: String,
@@ -18,7 +20,7 @@ fn main() {
         ap.parse_args_or_exit();
     }
     println!("nts value is {}",args.nts);
-    let nts_result = genetic_code::Sequence::from_str(&args.nts);
+    let nts_result = sequence::Sequence::<nucleotide::Nucleotide>::from_str(&args.nts);
     match nts_result {
         Ok(nts) => {
             println!("nts object value is {}",nts.to_string());
