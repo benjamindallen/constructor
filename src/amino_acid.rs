@@ -77,7 +77,7 @@ impl AminoAcid {
             "VAL" => Ok(AminoAcid::V),
             "TRP" => Ok(AminoAcid::W),
             "TYR" => Ok(AminoAcid::Y),
-            "*" => Ok(AminoAcid::STOP),
+            "*" | " * " => Ok(AminoAcid::STOP),
             bad_aa => Err(format!("Bad amino-acid specifier {}",bad_aa)),
         }
     }
@@ -103,7 +103,7 @@ impl AminoAcid {
             &AminoAcid::V => "VAL",
             &AminoAcid::W => "TRP",
             &AminoAcid::Y => "TYR",
-            &AminoAcid::STOP => "*",
+            &AminoAcid::STOP => " * ",
         }
     }
 }
