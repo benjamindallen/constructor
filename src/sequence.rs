@@ -10,11 +10,17 @@ pub struct Codon<N> where N: NucleotideLike {
     data: [N;3],
 }
 
-impl<N> Codon<N> where N: NucleotideLike + Clone {
+impl<N> Codon<N> where N: NucleotideLike<N=N> + Clone {
     pub fn from_slice(input: &[N]) -> Codon<N> {
         Codon::<N> { data: [input[0].clone(),
                             input[1].clone(),
                             input[2].clone()] }
+    }
+    pub fn from_str(input: &str) -> Result<Codon<N>, String> {
+        let mut chars = input.chars();
+        Ok(Codon::<N> { data: [N::from_char(chars.next().unwrap())?,
+                               N::from_char(chars.next().unwrap())?,
+                               N::from_char(chars.next().unwrap())?] } )
     }
 }
 
@@ -60,6 +66,9 @@ impl<N> Sequence<N> where N: NucleotideLike<N=N> + Clone {
         else
             { Err(format!("Codon index out of bounds")) }
     }
+    pub fn codons(self) -> SequenceIntoCodonIterator<N> {
+        SequenceIntoCodonIterator::<N> { sequence: self, index: 0 }
+    }
 }
 
 impl<N> Iterator for SequenceIntoCodonIterator<N> where N: NucleotideLike<N=N>
@@ -76,50 +85,35 @@ impl<N> Iterator for SequenceIntoCodonIterator<N> where N: NucleotideLike<N=N>
     }
 }
 
-impl<N> IntoIterator for Sequence<N> where N: NucleotideLike<N=N> + Clone {
-    type Item = Codon<N>;
-    type IntoIter = SequenceIntoCodonIterator<N>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        SequenceIntoCodonIterator::<N> { sequence: self, index: 0 }
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use super::Sequence;
+    use super::{Sequence, Codon};
     use nucleotide::Nucleotide;
     use degenerate_nucleotide::DegenerateNucleotide;
 
     #[test]
     fn good_nucleotide_specs() {
-        for nts in ["AAAAAC","ACGTACGTAAGATCTCG"].iter() {
-            let result  = Sequence::<Nucleotide>::from_str(nts);
-            match result {
-                Ok(s) => assert_eq!(*nts,s.to_string()),
-                Err(e) => panic!(e)
-            }
+        for s in ["AAAAAC","ACGTACGTAAGATCTCG"].iter() {
+            let nts = Sequence::<Nucleotide>::from_str(s).unwrap();
+            assert_eq!(*s,nts.to_string());
         }
-        for dnts in ["ANYTGCYR"].iter() {
-            let result = Sequence::<DegenerateNucleotide>::from_str(dnts);
-            match result {
-                Ok(s) => assert_eq!(*dnts,s.to_string()),
-                Err(e) => panic!(e)
-            }
+        for s in ["ANYTGCYR"].iter() {
+            let dnts = Sequence::<DegenerateNucleotide>::from_str(s).unwrap();
+            assert_eq!(*s,dnts.to_string());
         }
     }
 
     #[test]
     fn bad_nucleotide_specs() {
-        for nts in ["AAANAAC","ACGTACGTAAGATCTCGX"].iter() {
-            let result = Sequence::<Nucleotide>::from_str(nts);
+        for s in ["AAANAAC","ACGTACGTAAGATCTCGX"].iter() {
+            let result = Sequence::<Nucleotide>::from_str(s);
             match result {
                 Ok(_) => panic!("Failed to detect bad nucleotide input"),
                 Err(_) => ()
             }
         }
-        for nts in ["A-AANAAC","ACGTACGTAAGATCTCGX"].iter() {
-            let result = Sequence::<DegenerateNucleotide>::from_str(nts);
+        for s in ["A-AANAAC","ACGTACGTAAGATCTCGX"].iter() {
+            let result = Sequence::<DegenerateNucleotide>::from_str(s);
             match result {
                 Ok(_) => panic!("Failed to detect bad nucleotide input"),
                 Err(_) => ()
@@ -129,46 +123,38 @@ mod tests {
 
     #[test]
     fn reverse_complement() {
-        let result = Sequence::<Nucleotide>::from_str("GTAAAAC");
-        match result {
-            Ok(nts) => assert_eq!("GTTTTAC",
-                                  nts.reverse_complement().to_string()),
-            Err(e) => panic!(e)
-        }
-        let result2 = Sequence::<DegenerateNucleotide>::from_str("GTANYKR");
-        match result2 {
-            Ok(dnts) => assert_eq!("YMRNTAC",
-                                   dnts.reverse_complement().to_string()),
-            Err(e) => panic!(e)
-        }
+        let nts = Sequence::<Nucleotide>::from_str("GTAAAAC").unwrap();
+        assert_eq!("GTTTTAC",nts.reverse_complement().to_string());
+        let dnts = Sequence::<DegenerateNucleotide>::from_str("GTANYKR").unwrap();
+        assert_eq!("YMRNTAC",dnts.reverse_complement().to_string());
     }
 
     #[test]
     fn codon() {
-        let input_result = Sequence::<Nucleotide>::from_str("GTAAAAC");
-        let codon1_result = Sequence::<Nucleotide>::from_str("GTA");
-        let codon2_result = Sequence::<Nucleotide>::from_str("TAA");
-        match (input_result,codon1_result,codon2_result) {
-            (Ok(input),Ok(codon1),Ok(codon2)) => {
-                let test1_result = input.codon(0); // should be "GTA"
-                let test2_result = input.codon(1); // should be "TAA"
-                let comp1_result = codon1.codon(0);
-                let comp2_result = codon2.codon(0);
-                match (test1_result,test2_result,comp1_result,comp2_result) {
-                    (Ok(test1),Ok(test2),Ok(comp1),Ok(comp2)) => {
-                        assert_eq!(test1,comp1);
-                        assert_eq!(test2,comp2);
-                    }
-                    _ => panic!("bad sequence input")
-                }
-                // trying to take a codon out of bounds should return Err
-                let test3_result = input.codon(5);
-                match test3_result {
-                    Ok(_) => panic!("did not error for out-of-bounds codon"),
-                    Err(_) => ()
-                }
-            }
-            _ => panic!("bad sequence input")
+        let input = Sequence::<Nucleotide>::from_str("GTAAAAC").unwrap();
+        let codon1 = Codon::<Nucleotide>::from_str("GTA").unwrap();
+        let codon2 = Codon::<Nucleotide>::from_str("TAA").unwrap();
+        assert_eq!(input.codon(0).unwrap(),codon1);
+        assert_eq!(input.codon(1).unwrap(),codon2);
+        match input.codon(5) {
+            Ok(_) => panic!("did not error for out-of-bounds codon"),
+            Err(_) => ()
+        }
+    }
+
+    #[test]
+    fn codons() {
+        let input = Sequence::<Nucleotide>::from_str("GTAAAACAG").unwrap();
+        let codon1 = Codon::<Nucleotide>::from_str("GTA").unwrap();
+        let codon2 = Codon::<Nucleotide>::from_str("AAA").unwrap();
+        let codon3 = Codon::<Nucleotide>::from_str("CAG").unwrap();
+        let mut codons = input.codons();
+        assert_eq!(codons.next().unwrap(),codon1);
+        assert_eq!(codons.next().unwrap(),codon2);
+        assert_eq!(codons.next().unwrap(),codon3);
+        match codons.next() {
+            Some(_) => panic!("Codon iterator failed to end"),
+            None => ()
         }
     }
 }

@@ -117,29 +117,22 @@ mod tests {
     #[test]
     fn complement() {
         for ch in DEGENERATE_NUCLEOTIDE_CHARS.chars() {
-            match DegenerateNucleotide::from_char(ch) {
-                Ok(dnt) => assert_eq!(dnt,dnt.complement().complement()),
-                Err(e) => panic!(e),
-            }
+            let dnt = DegenerateNucleotide::from_char(ch).unwrap();
+            assert_eq!(dnt,dnt.complement().complement());
         }
     }
 
     #[test]
     fn expand() {
         for ch in DEGENERATE_NUCLEOTIDE_CHARS.chars() {
-            match DegenerateNucleotide::from_char(ch) {
-                Ok(dnt) => {
-                    let a: HashSet<_> = dnt.expand().iter().cloned().collect();
-                    let mut b = HashSet::<Nucleotide>::new();
-                    for nt in dnt.complement().expand().iter() {
-                        b.insert(nt.complement());
-                    }
-                    let diff: HashSet<_> = a.symmetric_difference(&b).cloned().collect();
-                    println!("{:?}, {:?}, {:?}",a,b,diff);
-                    assert!(diff.is_empty())
-                },
-                Err(e) => panic!(e),
+            let dnt = DegenerateNucleotide::from_char(ch).unwrap();
+            let a: HashSet<_> = dnt.expand().iter().cloned().collect();
+            let mut b = HashSet::<Nucleotide>::new();
+            for nt in dnt.complement().expand().iter() {
+                b.insert(nt.complement());
             }
+            let diff: HashSet<_> = a.symmetric_difference(&b).cloned().collect();
+            assert!(diff.is_empty())
         }
     }
 }
