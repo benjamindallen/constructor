@@ -3,6 +3,7 @@ extern crate argparse;
 mod sequence;
 mod nucleotide;
 mod degenerate_nucleotide;
+mod amino_acids;
 
 struct CommandLineArgs {
     nts: String,
