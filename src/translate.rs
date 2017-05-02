@@ -1,5 +1,6 @@
 use nucleotide::Nucleotide;
-use sequence::Codon;
+use sequence::Sequence;
+use codon::Codon;
 use amino_acid::AminoAcid;
 
 pub fn translate_codon(input: &Codon<Nucleotide>) -> Result<AminoAcid, String> {
@@ -29,13 +30,15 @@ pub fn translate_codon(input: &Codon<Nucleotide>) -> Result<AminoAcid, String> {
     }
 }
 
+//pub fn translate_sequence(input: &Sequence<Nucleotide>)
+
 //pub fn reverse_translate(input: &AminoAcid) ->
 
 #[cfg(test)]
 mod tests {
     use super::translate_codon;
     use nucleotide::Nucleotide;
-    use sequence::Codon;
+    use codon::Codon;
 
     const NUCLEOTIDE_CHARS: &'static str = "ACGT";
 

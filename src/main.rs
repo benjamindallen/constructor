@@ -1,7 +1,8 @@
 extern crate argparse;
 
-mod sequence;
 mod nucleotide;
+mod codon;
+mod sequence;
 mod degenerate_nucleotide;
 mod amino_acid;
 mod translate;
