@@ -1,6 +1,6 @@
 #[derive(PartialEq, Eq, Hash, Clone, Debug)]
 pub enum AminoAcid {
-    A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y,
+    A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y, STOP
 }
 
 impl AminoAcid {
@@ -26,6 +26,7 @@ impl AminoAcid {
             'V' | 'v' => Ok(AminoAcid::V),
             'W' | 'w' => Ok(AminoAcid::W),
             'Y' | 'y' => Ok(AminoAcid::Y),
+            '*' => Ok(AminoAcid::STOP),
             bad_aa => Err(format!("Bad amino-acid specifier {}",bad_aa)),
         }
     }
@@ -51,6 +52,7 @@ impl AminoAcid {
             &AminoAcid::V => 'V',
             &AminoAcid::W => 'W',
             &AminoAcid::Y => 'Y',
+            &AminoAcid::STOP => '*',
         }
     }
     pub fn from_three_letter_code(input: &str) -> Result<AminoAcid, String> {
@@ -75,6 +77,7 @@ impl AminoAcid {
             "VAL" => Ok(AminoAcid::V),
             "TRP" => Ok(AminoAcid::W),
             "TYR" => Ok(AminoAcid::Y),
+            "*" => Ok(AminoAcid::STOP),
             bad_aa => Err(format!("Bad amino-acid specifier {}",bad_aa)),
         }
     }
@@ -100,6 +103,7 @@ impl AminoAcid {
             &AminoAcid::V => "VAL",
             &AminoAcid::W => "TRP",
             &AminoAcid::Y => "TYR",
+            &AminoAcid::STOP => "*",
         }
     }
 }
@@ -108,7 +112,7 @@ impl AminoAcid {
 mod tests {
     use super::AminoAcid;
 
-    const AMINO_ACID_CHARS: &'static str = "ACDEFGHIKLMNPQRSTVWY";
+    const AMINO_ACID_CHARS: &'static str = "ACDEFGHIKLMNPQRSTVWY*";
     const DISALLOWED_AMINO_ACID_CHARS: &'static str = "BJOUXZ";
 
     #[test]
