@@ -22,6 +22,13 @@ impl<N> Codon<N> where N: NucleotideLike<N=N> + Clone {
                                N::from_char(chars.next().unwrap())?,
                                N::from_char(chars.next().unwrap())?] } )
     }
+    pub fn to_string(&self) -> String {
+        let mut output = String::new();
+        for nt in self.data.iter() {
+            output.push(nt.to_char());
+        }
+        output
+    }
 }
 
 impl<N> PartialEq for Codon<N> where N: NucleotideLike + PartialEq {
@@ -134,6 +141,8 @@ mod tests {
         let input = Sequence::<Nucleotide>::from_str("GTAAAAC").unwrap();
         let codon1 = Codon::<Nucleotide>::from_str("GTA").unwrap();
         let codon2 = Codon::<Nucleotide>::from_str("TAA").unwrap();
+        assert_eq!(codon1.to_string(),"GTA");
+        assert_eq!(codon2.to_string(),"TAA");
         assert_eq!(input.codon(0).unwrap(),codon1);
         assert_eq!(input.codon(1).unwrap(),codon2);
         match input.codon(5) {
