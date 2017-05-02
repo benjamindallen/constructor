@@ -6,40 +6,39 @@ pub enum DegenerateNucleotide {
 }
 
 impl DegenerateNucleotide {
-    fn expand(&self) -> Vec<Nucleotide> {
+    fn expand(&self) -> &'static [Nucleotide] {
+        static A: [Nucleotide;1] = [Nucleotide::A];
+        static C: [Nucleotide;1] = [Nucleotide::C];
+        static G: [Nucleotide;1] = [Nucleotide::G];
+        static T: [Nucleotide;1] = [Nucleotide::T];
+        static R: [Nucleotide;2] = [Nucleotide::A, Nucleotide::G];
+        static Y: [Nucleotide;2] = [Nucleotide::C, Nucleotide::T];
+        static S: [Nucleotide;2] = [Nucleotide::C, Nucleotide::G];
+        static W: [Nucleotide;2] = [Nucleotide::A, Nucleotide::T];
+        static K: [Nucleotide;2] = [Nucleotide::G, Nucleotide::T];
+        static M: [Nucleotide;2] = [Nucleotide::A, Nucleotide::C];
+        static B: [Nucleotide;3] = [Nucleotide::C, Nucleotide::G, Nucleotide::T];
+        static D: [Nucleotide;3] = [Nucleotide::A, Nucleotide::G, Nucleotide::T];
+        static H: [Nucleotide;3] = [Nucleotide::A, Nucleotide::C, Nucleotide::T];
+        static V: [Nucleotide;3] = [Nucleotide::A, Nucleotide::C, Nucleotide::G];
+        static N: [Nucleotide;4] = [Nucleotide::A, Nucleotide::C, Nucleotide::G,
+                                    Nucleotide::T];
         match self {
-            &DegenerateNucleotide::A => vec![Nucleotide::A],
-            &DegenerateNucleotide::C => vec![Nucleotide::C],
-            &DegenerateNucleotide::G => vec![Nucleotide::G],
-            &DegenerateNucleotide::T => vec![Nucleotide::T],
-            &DegenerateNucleotide::R => vec![Nucleotide::A,
-                                             Nucleotide::G],
-            &DegenerateNucleotide::Y => vec![Nucleotide::C,
-                                             Nucleotide::T],
-            &DegenerateNucleotide::S => vec![Nucleotide::C,
-                                             Nucleotide::G],
-            &DegenerateNucleotide::W => vec![Nucleotide::A,
-                                             Nucleotide::T],
-            &DegenerateNucleotide::K => vec![Nucleotide::G,
-                                             Nucleotide::T],
-            &DegenerateNucleotide::M => vec![Nucleotide::A,
-                                             Nucleotide::C],
-            &DegenerateNucleotide::B => vec![Nucleotide::C,
-                                             Nucleotide::G,
-                                             Nucleotide::T],
-            &DegenerateNucleotide::D => vec![Nucleotide::A,
-                                             Nucleotide::G,
-                                             Nucleotide::T],
-            &DegenerateNucleotide::H => vec![Nucleotide::A,
-                                             Nucleotide::C,
-                                             Nucleotide::T],
-            &DegenerateNucleotide::V => vec![Nucleotide::A,
-                                             Nucleotide::C,
-                                             Nucleotide::G],
-            &DegenerateNucleotide::N => vec![Nucleotide::A,
-                                             Nucleotide::C,
-                                             Nucleotide::G,
-                                             Nucleotide::T],
+            &DegenerateNucleotide::A => &A,
+            &DegenerateNucleotide::C => &C,
+            &DegenerateNucleotide::G => &G,
+            &DegenerateNucleotide::T => &T,
+            &DegenerateNucleotide::R => &R,
+            &DegenerateNucleotide::Y => &Y,
+            &DegenerateNucleotide::S => &S,
+            &DegenerateNucleotide::W => &W,
+            &DegenerateNucleotide::K => &K,
+            &DegenerateNucleotide::M => &M,
+            &DegenerateNucleotide::B => &B,
+            &DegenerateNucleotide::D => &D,
+            &DegenerateNucleotide::H => &H,
+            &DegenerateNucleotide::V => &V,
+            &DegenerateNucleotide::N => &N,
         }
     }
 }
