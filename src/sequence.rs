@@ -1,11 +1,22 @@
 use string_io::StringIO;
 use nucleotide::Complement;
-use amino_acid::AminoAcid;
 use codon::Codon;
 
 #[derive(Debug)]
 pub struct Sequence<N> {
     data: Vec<N>,
+}
+
+impl<N> Sequence<N> {
+    pub fn push(&mut self, item: N) {
+        self.data.push(item);
+    }
+}
+
+impl<N> PartialEq for Sequence<N> where N: StringIO + PartialEq {
+    fn eq(&self, other: &Sequence<N>) -> bool {
+        self.data == other.data
+    }
 }
 
 impl<N> Sequence<N> where N: StringIO<N=N> + Clone {
@@ -35,7 +46,7 @@ impl<N> Sequence<N> where N: StringIO<N=N> + Clone {
         }
         output
     }
-    pub fn codons(self) -> SequenceIntoCodonIterator<N> {
+    pub fn codons(&self) -> SequenceIntoCodonIterator<N> {
         SequenceIntoCodonIterator::<N> { sequence: self, index: 0 }
     }
 }
@@ -50,7 +61,7 @@ impl<N> Sequence<N> where N: Complement<N=N> + StringIO<N=N> + Clone {
     }
 }
 
-impl<N> Iterator for SequenceIntoCodonIterator<N> where N: StringIO<N=N>
+impl<'a,N> Iterator for SequenceIntoCodonIterator<'a,N> where N: StringIO<N=N>
                                                            + Clone {
     type Item = Codon<N>;
     fn next(&mut self) -> Option<Codon<N>> {
@@ -64,8 +75,8 @@ impl<N> Iterator for SequenceIntoCodonIterator<N> where N: StringIO<N=N>
     }
 }
 
-pub struct SequenceIntoCodonIterator<N> where N: StringIO {
-    sequence: Sequence<N>,
+pub struct SequenceIntoCodonIterator<'a,N> where N: StringIO + 'a {
+    sequence: &'a Sequence<N>,
     index: usize,
 }
 

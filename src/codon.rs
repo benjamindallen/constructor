@@ -33,7 +33,7 @@ impl<N> Codon<N> where N: StringIO<N=N> + Clone {
 }
 
 impl<N> PartialEq for Codon<N> where N: StringIO + PartialEq {
-    fn eq(&self, other:&Codon<N>) -> bool {
+    fn eq(&self, other: &Codon<N>) -> bool {
         self.data == other.data
     }
 }
