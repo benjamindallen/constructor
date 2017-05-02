@@ -1,6 +1,6 @@
 use nucleotide::{Nucleotide, NucleotideLike};
 
-#[derive(PartialEq, Eq, Hash, Clone, Debug)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]
 pub enum DegenerateNucleotide {
     A, C, G, T, R, Y, S, W, K, M, B, D, H, V, N,
 }

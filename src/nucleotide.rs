@@ -1,4 +1,4 @@
-#[derive(PartialEq, Eq, Hash, Clone, Debug)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]
 pub enum Nucleotide {
     A, C, G, T,
 }

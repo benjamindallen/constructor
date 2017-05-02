@@ -6,29 +6,30 @@ pub struct Sequence<N> where N: NucleotideLike {
 }
 
 #[derive(Debug)]
-pub struct Codon<'a, N> where N: NucleotideLike + 'a {
-    data: &'a [N],
+pub struct Codon<N> where N: NucleotideLike {
+    data: [N;3],
 }
 
-/*
-Compare two Codons
-*/
-impl<'a, N> PartialEq for Codon<'a, N> where N: NucleotideLike + PartialEq + 'a {
-    fn eq(&self, other: &Codon<'a, N>) -> bool {
+impl<N> Codon<N> where N: NucleotideLike + Clone {
+    pub fn from_slice(input: &[N]) -> Codon<N> {
+        Codon::<N> { data: [input[0].clone(),
+                            input[1].clone(),
+                            input[2].clone()] }
+    }
+}
+
+impl<N> PartialEq for Codon<N> where N: NucleotideLike + PartialEq {
+    fn eq(&self, other:&Codon<N>) -> bool {
         self.data == other.data
     }
 }
 
-/*
-Compare LHS=Sequence with RHS=Codon
-*/
-impl<'a, N> PartialEq<Codon<'a,N>> for Sequence<N> where N: NucleotideLike + PartialEq + 'a {
-    fn eq(&self, other: &Codon<'a, N>) -> bool {
-        self.data == other.data
-    }
+pub struct SequenceIntoCodonIterator<N> where N: NucleotideLike {
+    sequence: Sequence<N>,
+    index: usize,
 }
 
-impl<N> Sequence<N> where N: NucleotideLike<N=N> + PartialEq {
+impl<N> Sequence<N> where N: NucleotideLike<N=N> + Clone {
     pub fn new() -> Sequence<N> {
         Sequence::<N>{data: Vec::new()}
     }
@@ -55,9 +56,32 @@ impl<N> Sequence<N> where N: NucleotideLike<N=N> + PartialEq {
     }
     pub fn codon(&self, index: usize) -> Result<Codon<N>, String> {
         if index+3 <= self.data.len()
-            { Ok(Codon::<N> { data: &self.data[index .. index+3] } ) }
+            { Ok(Codon::<N>::from_slice(&self.data[index..index+3])) }
         else
             { Err(format!("Codon index out of bounds")) }
+    }
+}
+
+impl<N> Iterator for SequenceIntoCodonIterator<N> where N: NucleotideLike<N=N>
+                                                           + Clone {
+    type Item = Codon<N>;
+    fn next(&mut self) -> Option<Codon<N>> {
+        match self.sequence.codon(self.index) {
+            Ok(codon) => {
+                self.index += 3;
+                Some(codon)
+            },
+            Err(_) => None,
+        }
+    }
+}
+
+impl<N> IntoIterator for Sequence<N> where N: NucleotideLike<N=N> + Clone {
+    type Item = Codon<N>;
+    type IntoIter = SequenceIntoCodonIterator<N>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        SequenceIntoCodonIterator::<N> { sequence: self, index: 0 }
     }
 }
 
@@ -128,10 +152,12 @@ mod tests {
             (Ok(input),Ok(codon1),Ok(codon2)) => {
                 let test1_result = input.codon(0); // should be "GTA"
                 let test2_result = input.codon(1); // should be "TAA"
-                match (test1_result,test2_result) {
-                    (Ok(test1),Ok(test2)) => {
-                        assert_eq!(codon1,test1);
-                        assert_eq!(codon2,test2);
+                let comp1_result = codon1.codon(0);
+                let comp2_result = codon2.codon(0);
+                match (test1_result,test2_result,comp1_result,comp2_result) {
+                    (Ok(test1),Ok(test2),Ok(comp1),Ok(comp2)) => {
+                        assert_eq!(test1,comp1);
+                        assert_eq!(test2,comp2);
                     }
                     _ => panic!("bad sequence input")
                 }
