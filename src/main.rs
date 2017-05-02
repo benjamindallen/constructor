@@ -6,6 +6,7 @@ mod sequence;
 mod degenerate_nucleotide;
 mod amino_acid;
 mod translate;
+mod string_io;
 
 struct CommandLineArgs {
     nts: String,

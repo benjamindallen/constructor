@@ -1,4 +1,6 @@
-use nucleotide::NucleotideLike;
+use string_io::StringIO;
+use nucleotide::Complement;
+use amino_acid::AminoAcid;
 use codon::Codon;
 
 #[derive(Debug)]
@@ -6,10 +8,19 @@ pub struct Sequence<N> {
     data: Vec<N>,
 }
 
-impl<N> Sequence<N> where N: NucleotideLike<N=N> + Clone {
+impl<N> Sequence<N> where N: StringIO<N=N> + Clone {
     pub fn new() -> Sequence<N> {
         Sequence::<N>{data: Vec::new()}
     }
+    pub fn codon(&self, index: usize) -> Result<Codon<N>, String> {
+        if index+3 <= self.data.len()
+            { Ok(Codon::<N>::from_slice(&self.data[index..index+3])) }
+        else
+            { Err(format!("Codon index out of bounds")) }
+    }
+}
+
+impl<N> Sequence<N> where N: StringIO<N=N> + Clone {
     pub fn from_str(input: &str) -> Result<Sequence<N>, String> {
         let mut seq = Sequence::<N>::new();
         for ch in input.chars() {
@@ -24,6 +35,12 @@ impl<N> Sequence<N> where N: NucleotideLike<N=N> + Clone {
         }
         output
     }
+    pub fn codons(self) -> SequenceIntoCodonIterator<N> {
+        SequenceIntoCodonIterator::<N> { sequence: self, index: 0 }
+    }
+}
+
+impl<N> Sequence<N> where N: Complement<N=N> + StringIO<N=N> + Clone {
     pub fn reverse_complement(&self) -> Sequence<N> {
         let mut rc = Sequence::<N>::new();
         for nt in self.data.iter().rev() {
@@ -31,18 +48,9 @@ impl<N> Sequence<N> where N: NucleotideLike<N=N> + Clone {
         }
         rc
     }
-    pub fn codon(&self, index: usize) -> Result<Codon<N>, String> {
-        if index+3 <= self.data.len()
-            { Ok(Codon::<N>::from_slice(&self.data[index..index+3])) }
-        else
-            { Err(format!("Codon index out of bounds")) }
-    }
-    pub fn codons(self) -> SequenceIntoCodonIterator<N> {
-        SequenceIntoCodonIterator::<N> { sequence: self, index: 0 }
-    }
 }
 
-impl<N> Iterator for SequenceIntoCodonIterator<N> where N: NucleotideLike<N=N>
+impl<N> Iterator for SequenceIntoCodonIterator<N> where N: StringIO<N=N>
                                                            + Clone {
     type Item = Codon<N>;
     fn next(&mut self) -> Option<Codon<N>> {
@@ -56,7 +64,7 @@ impl<N> Iterator for SequenceIntoCodonIterator<N> where N: NucleotideLike<N=N>
     }
 }
 
-pub struct SequenceIntoCodonIterator<N> where N: NucleotideLike {
+pub struct SequenceIntoCodonIterator<N> where N: StringIO {
     sequence: Sequence<N>,
     index: usize,
 }

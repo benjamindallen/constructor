@@ -1,16 +1,16 @@
+use string_io::StringIO;
+
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]
 pub enum Nucleotide {
     A, C, G, T,
 }
 
-pub trait NucleotideLike {
+pub trait Complement {
     type N;
-    fn from_char(input: char) -> Result<Self::N, String>;
-    fn to_char(&self) -> char;
     fn complement(&self) -> Self::N;
 }
 
-impl NucleotideLike for Nucleotide {
+impl StringIO for Nucleotide {
     type N = Nucleotide;
     fn from_char(input: char) -> Result<Nucleotide, String> {
         match input {
@@ -29,6 +29,10 @@ impl NucleotideLike for Nucleotide {
             &Nucleotide::T => 'T',
         }
     }
+}
+
+impl Complement for Nucleotide {
+    type N = Nucleotide;
     fn complement(&self) -> Nucleotide {
         match self {
             &Nucleotide::A => Nucleotide::T,

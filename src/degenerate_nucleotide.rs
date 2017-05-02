@@ -1,4 +1,5 @@
-use nucleotide::{Nucleotide, NucleotideLike};
+use nucleotide::{Nucleotide, Complement};
+use string_io::StringIO;
 
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]
 pub enum DegenerateNucleotide {
@@ -43,7 +44,7 @@ impl DegenerateNucleotide {
     }
 }
 
-impl NucleotideLike for DegenerateNucleotide {
+impl StringIO for DegenerateNucleotide {
     type N = DegenerateNucleotide;
     fn from_char(input: char) -> Result<DegenerateNucleotide, String> {
         match input {
@@ -84,6 +85,10 @@ impl NucleotideLike for DegenerateNucleotide {
             &DegenerateNucleotide::N => 'N',
         }
     }
+}
+
+impl Complement for DegenerateNucleotide {
+    type N = DegenerateNucleotide;
     fn complement(&self) -> DegenerateNucleotide {
         match self {
             &DegenerateNucleotide::A => DegenerateNucleotide::T,
@@ -108,8 +113,9 @@ impl NucleotideLike for DegenerateNucleotide {
 #[cfg(test)]
 mod tests {
     use super::DegenerateNucleotide;
-    use nucleotide::{Nucleotide, NucleotideLike};
+    use nucleotide::{Nucleotide, Complement};
     use std::collections::HashSet;
+    use string_io::StringIO;
 
     const DEGENERATE_NUCLEOTIDE_CHARS: &'static str = "ACGTRYSWKMBDHVN";
 

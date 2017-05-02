@@ -1,10 +1,13 @@
+use string_io::StringIO;
+
 #[derive(PartialEq, Eq, Hash, Clone, Debug)]
 pub enum AminoAcid {
     A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y, STOP
 }
 
-impl AminoAcid {
-    pub fn from_char(input: char) -> Result<AminoAcid, String> {
+impl StringIO for AminoAcid {
+    type N = AminoAcid;
+    fn from_char(input: char) -> Result<AminoAcid, String> {
         match input {
             'A' | 'a' => Ok(AminoAcid::A),
             'C' | 'c' => Ok(AminoAcid::C),
@@ -30,7 +33,7 @@ impl AminoAcid {
             bad_aa => Err(format!("Bad amino-acid specifier {}",bad_aa)),
         }
     }
-    pub fn to_char(&self) -> char {
+    fn to_char(&self) -> char {
         match self {
             &AminoAcid::A => 'A',
             &AminoAcid::C => 'C',
@@ -55,6 +58,9 @@ impl AminoAcid {
             &AminoAcid::STOP => '*',
         }
     }
+}
+
+impl AminoAcid {
     pub fn from_three_letter_code(input: &str) -> Result<AminoAcid, String> {
         match &String::from(input).to_uppercase()[..] {
             "ALA" => Ok(AminoAcid::A),
@@ -111,6 +117,7 @@ impl AminoAcid {
 #[cfg(test)]
 mod tests {
     use super::AminoAcid;
+    use string_io::StringIO;
 
     const AMINO_ACID_CHARS: &'static str = "ACDEFGHIKLMNPQRSTVWY*";
     const DISALLOWED_AMINO_ACID_CHARS: &'static str = "BJOUXZ";

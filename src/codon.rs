@@ -1,11 +1,12 @@
-use nucleotide::NucleotideLike;
+use string_io::StringIO;
+
 
 #[derive(Debug)]
 pub struct Codon<N> {
     data: [N;3],
 }
 
-impl<N> Codon<N> where N: NucleotideLike<N=N> + Clone {
+impl<N> Codon<N> where N: StringIO<N=N> + Clone {
     pub fn from_slice(input: &[N]) -> Codon<N> {
         Codon::<N> { data: [input[0].clone(),
                             input[1].clone(),
@@ -31,7 +32,7 @@ impl<N> Codon<N> where N: NucleotideLike<N=N> + Clone {
     }
 }
 
-impl<N> PartialEq for Codon<N> where N: NucleotideLike + PartialEq {
+impl<N> PartialEq for Codon<N> where N: StringIO + PartialEq {
     fn eq(&self, other:&Codon<N>) -> bool {
         self.data == other.data
     }
