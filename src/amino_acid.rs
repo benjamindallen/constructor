@@ -118,6 +118,7 @@ impl AminoAcid {
 mod tests {
     use super::AminoAcid;
     use string_io::StringIO;
+    use sequence::Sequence;
 
     const AMINO_ACID_CHARS: &'static str = "ACDEFGHIKLMNPQRSTVWY*";
     const DISALLOWED_AMINO_ACID_CHARS: &'static str = "BJOUXZ";
@@ -144,5 +145,11 @@ mod tests {
             assert_eq!(ch,aa_three.to_char());
             assert_eq!(aa,aa_three);
         }
+    }
+
+    #[test]
+    fn sequence() {
+        let seq = Sequence::<AminoAcid>::from_str(AMINO_ACID_CHARS).unwrap();
+        assert_eq!(seq.to_string(),AMINO_ACID_CHARS);
     }
 }
