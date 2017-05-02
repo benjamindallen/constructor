@@ -22,6 +22,11 @@ impl<N> Codon<N> where N: NucleotideLike<N=N> + Clone {
                                N::from_char(chars.next().unwrap())?,
                                N::from_char(chars.next().unwrap())?] } )
     }
+    pub fn from_chars(ch1: char, ch2: char, ch3: char) -> Result<Codon<N>, String> {
+        Ok(Codon::<N> { data: [N::from_char(ch1)?,
+                               N::from_char(ch2)?,
+                               N::from_char(ch3)?] } )
+    }
     pub fn to_string(&self) -> String {
         let mut output = String::new();
         for nt in self.data.iter() {
@@ -141,6 +146,8 @@ mod tests {
         let input = Sequence::<Nucleotide>::from_str("GTAAAAC").unwrap();
         let codon1 = Codon::<Nucleotide>::from_str("GTA").unwrap();
         let codon2 = Codon::<Nucleotide>::from_str("TAA").unwrap();
+        let codon1_chars = Codon::<Nucleotide>::from_chars('G','T','A').unwrap();
+        assert_eq!(codon1,codon1_chars);
         assert_eq!(codon1.to_string(),"GTA");
         assert_eq!(codon2.to_string(),"TAA");
         assert_eq!(input.codon(0).unwrap(),codon1);
