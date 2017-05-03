@@ -1,7 +1,7 @@
 mod string_io;
 pub mod nucleotide;
-mod codon;
-mod amino_acid;
-mod degenerate_nucleotide;
-mod translate;
+pub mod codon;
+pub mod amino_acid;
+pub mod degenerate_nucleotide;
+pub mod translate;
 pub mod sequence;

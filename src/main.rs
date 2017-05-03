@@ -2,8 +2,8 @@ extern crate argparse;
 extern crate constructor;
 
 
-use constructor::sequence::sequence::Sequence;
-use constructor::sequence::nucleotide::Nucleotide;
+use constructor::Sequence;
+use constructor::Nucleotide;
 //use amino_acid::AminoAcid;
 
 struct CommandLineArgs {
