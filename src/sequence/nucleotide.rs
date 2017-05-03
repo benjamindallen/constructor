@@ -1,4 +1,4 @@
-use string_io::StringIO;
+use sequence::string_io::StringIO;
 
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]
 pub enum Nucleotide {

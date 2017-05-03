@@ -1,10 +1,10 @@
-use nucleotide::Nucleotide;
-use sequence::Sequence;
-use codon::Codon;
-use amino_acid::AminoAcid;
+use sequence::nucleotide::Nucleotide;
+use sequence::sequence::Sequence;
+use sequence::codon::Codon;
+use sequence::amino_acid::AminoAcid;
 
 impl Codon<Nucleotide> {
-    fn translate(&self) -> Result<AminoAcid, String> {
+    pub fn translate(&self) -> Result<AminoAcid, String> {
         match &self.to_string()[..] {
             "GCA" | "GCC" | "GCG" | "GCT" => Ok(AminoAcid::A),
             "TGC" | "TGT" => Ok(AminoAcid::C),
@@ -33,7 +33,7 @@ impl Codon<Nucleotide> {
 }
 
 impl Sequence<Nucleotide> {
-    fn translate(&self) -> Result<Sequence<AminoAcid>, String> {
+    pub fn translate(&self) -> Result<Sequence<AminoAcid>, String> {
         let mut aa_seq = Sequence::<AminoAcid>::new();
         for codon in self.codons() {
             aa_seq.push(codon.translate()?);
@@ -46,10 +46,10 @@ impl Sequence<Nucleotide> {
 
 #[cfg(test)]
 mod tests {
-    use nucleotide::Nucleotide;
-    use codon::Codon;
-    use sequence::Sequence;
-    use amino_acid::AminoAcid;
+    use sequence::nucleotide::Nucleotide;
+    use sequence::codon::Codon;
+    use sequence::sequence::Sequence;
+    use sequence::amino_acid::AminoAcid;
 
     #[test]
     fn translate_codon() {

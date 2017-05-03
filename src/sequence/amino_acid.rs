@@ -1,4 +1,4 @@
-use string_io::StringIO;
+use sequence::string_io::StringIO;
 
 #[derive(PartialEq, Eq, Hash, Clone, Debug)]
 pub enum AminoAcid {
@@ -117,8 +117,8 @@ impl AminoAcid {
 #[cfg(test)]
 mod tests {
     use super::AminoAcid;
-    use string_io::StringIO;
-    use sequence::Sequence;
+    use sequence::string_io::StringIO;
+    use sequence::sequence::Sequence;
 
     const AMINO_ACID_CHARS: &'static str = "ACDEFGHIKLMNPQRSTVWY*";
     const DISALLOWED_AMINO_ACID_CHARS: &'static str = "BJOUXZ";

@@ -1,6 +1,6 @@
-use string_io::StringIO;
-use nucleotide::Complement;
-use codon::Codon;
+use sequence::string_io::StringIO;
+use sequence::nucleotide::Complement;
+use sequence::codon::Codon;
 
 #[derive(Debug)]
 pub struct Sequence<N> {
@@ -83,9 +83,9 @@ pub struct SequenceIntoCodonIterator<'a,N> where N: StringIO + 'a {
 #[cfg(test)]
 mod tests {
     use super::Sequence;
-    use nucleotide::Nucleotide;
-    use codon::Codon;
-    use degenerate_nucleotide::DegenerateNucleotide;
+    use sequence::nucleotide::Nucleotide;
+    use sequence::codon::Codon;
+    use sequence::degenerate_nucleotide::DegenerateNucleotide;
 
     #[test]
     fn good_nucleotide_specs() {

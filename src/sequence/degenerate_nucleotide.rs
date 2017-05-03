@@ -1,5 +1,5 @@
-use nucleotide::{Nucleotide, Complement};
-use string_io::StringIO;
+use sequence::nucleotide::{Nucleotide, Complement};
+use sequence::string_io::StringIO;
 
 #[derive(PartialEq, Eq, Hash, Copy, Clone, Debug)]
 pub enum DegenerateNucleotide {
@@ -112,10 +112,10 @@ impl Complement for DegenerateNucleotide {
 
 #[cfg(test)]
 mod tests {
-    use super::DegenerateNucleotide;
-    use nucleotide::{Nucleotide, Complement};
     use std::collections::HashSet;
-    use string_io::StringIO;
+    use super::DegenerateNucleotide;
+    use sequence::nucleotide::{Nucleotide, Complement};
+    use sequence::string_io::StringIO;
 
     const DEGENERATE_NUCLEOTIDE_CHARS: &'static str = "ACGTRYSWKMBDHVN";
 

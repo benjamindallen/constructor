@@ -1,5 +1,4 @@
-use string_io::StringIO;
-
+use sequence::string_io::StringIO;
 
 #[derive(Debug)]
 pub struct Codon<N> {
